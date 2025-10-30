@@ -26,7 +26,7 @@ public class tebakKata {
         char iChar;
         boolean found, tanpaNyawa;
 
-        System.out.println(word); //Hanya untuk pengecekan (Boleh dihapus)
+        // System.out.println(word); //Hanya untuk pengecekan (Boleh dihapus)
         System.out.println("Permainan Tebak Kata!");
         System.out.print("Main tanpa nyawa? (true/false): ");
         tanpaNyawa = i.nextBoolean();
