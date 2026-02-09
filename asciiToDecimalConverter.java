@@ -20,7 +20,7 @@ public class asciiToDecimalConverter {
                     System.out.println("Contoh penulisan \"Halo\", \"Hello World\", dll.");
                     System.out.print("ASCII Text: ");
                     String text = i.nextLine(); //ASCII input
-                    textToAscii(text); //Decimal to ASCII conv. function
+                    decimalToAscii(text); //Decimal to ASCII conv. function
                     break OUTER; //Break to the label
                 }
                 case 2 -> {
@@ -29,7 +29,7 @@ public class asciiToDecimalConverter {
                     System.out.println("Contoh penulisan \"45\", \"45 65 32\", dst.");
                     System.out.print("Decimal (byte): ");
                     String kode = i.nextLine(); //Decimal input
-                    asciiToText(kode); //ASCII to Decimal conv. function
+                    asciiToDecimal(kode); //ASCII to Decimal conv. function
                     break OUTER; //Break to the label
                 }
                 default ->
@@ -40,7 +40,7 @@ public class asciiToDecimalConverter {
     }
     
     //Decimal (byte) Function
-    public static void textToAscii(String text) {
+    public static void decimalToAscii(String text) {
         int[] kode = new int[text.length()];
         for (int i = 0; i < kode.length; i++) {
             char conv = (char) text.charAt(i);
@@ -57,7 +57,7 @@ public class asciiToDecimalConverter {
     }
     
     //Ascii Text Function
-    public static void asciiToText(String code) {
+    public static void asciiToDecimal(String code) {
         //Get numbers
         String[] nums = code.trim().split("\\s+");
         //Convert
