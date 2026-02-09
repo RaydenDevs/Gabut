@@ -9,15 +9,15 @@ public class asciiToDecimalConverter {
         OUTER: //Label
         while (true) {
             System.out.println("===Konverter Ascii Text - Decimal (bytes)===");
-            System.out.println("1.Decimal To Ascii");
-            System.out.println("2.Ascii To Decimal");
+            System.out.println("1.Ascii To Decimal");
+            System.out.println("2.Decimal To Ascii");
             System.out.print("Pilih: ");
             int selectMenu = i.nextInt();
                     i.nextLine(); //buffer
             switch (selectMenu) {
                 case 1 -> {
                     //hint
-                    System.out.println("Contoh penulisan \"Halo\", \"Hello World\", dll.");
+                    System.out.println("\nContoh penulisan \"Halo\", \"Hello World\", dll.");
                     System.out.print("ASCII Text: ");
                     String text = i.nextLine(); //ASCII input
                     decimalToAscii(text); //Decimal to ASCII conv. function
@@ -25,7 +25,7 @@ public class asciiToDecimalConverter {
                 }
                 case 2 -> {
                     //hint
-                    System.out.println("Pisahkan dengan (Spasi)");
+                    System.out.println("\nPisahkan dengan (Spasi)");
                     System.out.println("Contoh penulisan \"45\", \"45 65 32\", dst.");
                     System.out.print("Decimal (byte): ");
                     String kode = i.nextLine(); //Decimal input
