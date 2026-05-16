@@ -1,0 +1,262 @@
+import java.util.Random;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner in = new Scanner(System.in);
+        Random r = new Random();
+        Config config = new Config();
+
+        System.out.println("=========================================");
+        System.out.println("    SELAMAT DATANG DI RUSSIAN ROULETTE ");
+        System.out.println("=========================================");
+        taskWait(2000);
+
+        System.out.print("Ingin menggunakan pengaturan custom? (y/n): ");
+        String custom = in.nextLine();
+
+        // Custom Settings
+        if (custom.equalsIgnoreCase("y")) {
+            System.out.print("Masukkan jumlah peluru (max 30): ");
+            config.setPeluru(in.nextInt());
+
+            System.out.print("Masukkan jumlah nyawa (max 9): ");
+            config.setNyawa(in.nextInt());
+
+            System.out.print("Masukkan jumlah pemain (2-10): ");
+            config.setJumlahPemain(in.nextInt());
+
+            in.nextLine(); // buffer
+            System.out.println();
+        }
+
+        System.out.println("--- Pengaturan Permainan Saat Ini ---");
+        config.infoConfig();
+        System.out.println("-------------------------------------\n");
+        taskWait(1000);
+
+        // Cara Bermain
+        System.out.print("Apakah Anda ingin melihat cara bermain? (y/n): ");
+        String caraBermain = in.nextLine();
+        if (caraBermain.equalsIgnoreCase("y")) {
+            System.out.println("\n---------------- CARA BERMAIN ----------------");
+            System.out.println("1. Setiap pemain akan bergantian menarik pelatuk.");
+            System.out.println("2. Senjata memiliki jumlah slot silinder sesuai jumlah peluru.");
+            System.out.println("3. Hanya ada satu peluru aktif di dalam silinder.");
+            System.out.println("4. Jika silinder aktif tepat berada di posisi pelatuk, Anda tertembak.");
+            System.out.println("5. Nyawa Anda akan berkurang 1 setiap kali tertembak.");
+            System.out.println("6. Pemain yang kehabisan nyawa akan dinyatakan gugur.");
+            System.out.println("7. Pemain terakhir yang bertahan hidup adalah pemenangnya.");
+            System.out.println("----------------------------------------------");
+            System.out.print("Tekan ENTER untuk melanjutkan...");
+            in.nextLine();
+            System.out.println();
+        }
+
+        int jumlahPemain = config.getJumlahPemain();
+        int[] nyawaPemain = new int[jumlahPemain];
+        String[] namaPemain = new String[jumlahPemain];
+
+        // Input Nama Pemain
+        System.out.println("--- Input Nama Pemain ---");
+        for (int i = 0; i < jumlahPemain; i++) {
+            System.out.print("Masukkan nama Pemain " + (i + 1) + ": ");
+            namaPemain[i] = in.nextLine().trim();
+            if (namaPemain[i].isEmpty()) {
+                namaPemain[i] = "Pemain " + (i + 1);
+            }
+            nyawaPemain[i] = config.getNyawa();
+        }
+        System.out.println();
+
+        int pemainHidup = jumlahPemain;
+        int giliran = 0;
+
+        // jumlah peluru aktif dan kosong
+        int totalKapasitas = config.getPeluru();
+        int peluruAktif = r.nextInt(totalKapasitas) + 1;
+        int peluruKosong = totalKapasitas - peluruAktif;
+
+        // Loading
+        System.out.print("Mempersiapkan senjata [          ]");
+        taskWait(300);
+        System.out.print("\rMempersiapkan senjata [==        ]");
+        taskWait(400);
+        System.out.print("\rMempersiapkan senjata [====      ]");
+        taskWait(300);
+        System.out.print("\rMempersiapkan senjata [======    ]");
+        taskWait(500);
+        System.out.print("\rMempersiapkan senjata [========  ]");
+        taskWait(200);
+        System.out.print("\rMempersiapkan senjata [==========]");
+        taskWait(500);
+        System.out.println("\nSenjata siap! Permainan Dimulai!\n");
+        taskWait(1000);
+
+        // Game Loop
+        while (pemainHidup > 1) {
+            int currentPlayer = giliran % jumlahPemain;
+
+            // Cek dan reload
+            if (peluruAktif == 0 && peluruKosong == 0) {
+                System.out.println("=========================================");
+                System.out.println("Peluru habis! Mengisi ulang silinder...");
+                taskWait(1500);
+                peluruAktif = r.nextInt(totalKapasitas) + 1;
+                peluruKosong = totalKapasitas - peluruAktif;
+                System.out.println("Isi ulang selesai!");
+                System.out.println("=========================================\n");
+            }
+
+            // Hidup dan giliran
+            if (nyawaPemain[currentPlayer] > 0) {
+                System.out.println(">> Giliran " + namaPemain[currentPlayer] + " (Sisa Nyawa: " + nyawaPemain[currentPlayer] + ")");
+                System.out.println("Informasi Silinder -> Peluru Aktif: " + peluruAktif + " | Peluru Kosong: " + peluruKosong);
+
+                // Target Tembakan
+                System.out.println("Pilih target tembakan:");
+                System.out.println("1. Tembak diri sendiri");
+                System.out.println("2. Tembak pemain lain");
+                System.out.print("Pilihan (1/2): ");
+                int pilihanTarget = in.nextInt();
+                in.nextLine(); // buffer
+
+                int targetPlayer = currentPlayer;
+
+                if (pilihanTarget == 2) {
+                    System.out.println("\nPilih nama pemain lain yang ingin ditembak:");
+                    int opsiPemain = 1;
+                    int[] pemetaanOpsi = new int[jumlahPemain];
+
+                    for (int i = 0; i < jumlahPemain; i++) {
+                        if (i != currentPlayer && nyawaPemain[i] > 0) {
+                            System.out.println(opsiPemain + ". " + namaPemain[i]);
+                            pemetaanOpsi[opsiPemain] = i;
+                            opsiPemain++;
+                        }
+                    }
+
+                    System.out.print("Pilih nomor target: ");
+                    int targetOpsi = in.nextInt();
+                    in.nextLine(); // buffer
+
+                    if (targetOpsi > 0 && targetOpsi < opsiPemain) {
+                        targetPlayer = pemetaanOpsi[targetOpsi];
+                    } else {
+                        System.out.println("Pilihan tidak valid, target otomatis dialihkan ke diri sendiri.");
+                    }
+                }
+
+                System.out.println("\nMenaruh moncong senjata ke " + (targetPlayer == currentPlayer ? "diri sendiri" : namaPemain[targetPlayer]) + "...");
+                System.out.print("Tekan ENTER untuk menarik pelatuk...");
+                in.nextLine();
+
+                System.out.print("Memutar silinder");
+                for (int i = 0; i < 3; i++) {
+                    taskWait(500);
+                    System.out.print(".");
+                }
+                System.out.println();
+                taskWait(800);
+
+                // Logika Russian Roulette
+                int totalSisaPeluru = peluruAktif + peluruKosong;
+                int bulletChamber = r.nextInt(totalSisaPeluru);
+
+                if (bulletChamber < peluruAktif) {
+                    System.out.println("!!! DORRR !!!");
+                    nyawaPemain[targetPlayer]--;
+                    peluruAktif--;
+
+                    if (nyawaPemain[targetPlayer] == 0) {
+                        System.out.println(namaPemain[targetPlayer] + " gugur!\n");
+                        pememangCek:
+                        pemainHidup--;
+                    } else {
+                        System.out.println(namaPemain[targetPlayer] + " tertembak! Sisa nyawa: " + nyawaPemain[targetPlayer] + "\n");
+                    }
+                } else {
+                    System.out.println("*Klik* ... Aman.\n");
+                    peluruKosong--;
+                }
+                taskWait(1000);
+            }
+            giliran++;
+        }
+
+        //Pemenang
+        System.out.println("=========================================");
+        for (int i = 0; i < jumlahPemain; i++) {
+            if (nyawaPemain[i] > 0) {
+                System.out.println(namaPemain[i].toUpperCase() + " MEMENANGKAN PERMAINAN!");
+                break;
+            }
+        }
+        System.out.println("=========================================");
+    }
+
+    static void taskWait(int ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
+
+class Config {
+    int peluru;
+    int nyawa;
+    int jumlahPemain;
+
+    Config() {
+        peluru = 6;
+        nyawa = 3;
+        jumlahPemain = 2;
+    }
+
+    public void infoConfig() {
+        System.out.println("Jumlah Peluru\t: " + peluru
+                + "\nJumlah Nyawa\t: " + nyawa
+                + "\nJumlah Pemain\t: " + jumlahPemain);
+    }
+
+    public int setPeluru(int peluru) {
+        if (peluru > 0 && peluru <= 30) {
+            this.peluru = peluru;
+        } else {
+            System.err.println("Batas peluru antara 1 hingga 30. (Menggunakan default: " + this.peluru + ")");
+        }
+        return this.peluru;
+    }
+
+    public void setNyawa(int nyawa) {
+        if (nyawa > 0 && nyawa < 10) {
+            this.nyawa = nyawa;
+        } else {
+            System.err.println("Batas nyawa antara 1 hingga 9. (Menggunakan default: " + this.nyawa + ")");
+        }
+    }
+
+    public void setJumlahPemain(int jumlahPemain) {
+        if (jumlahPemain < 2) {
+            System.err.println("Pemain minimal 2 orang! (Menggunakan default: " + this.jumlahPemain + ")");
+        } else if (jumlahPemain > 10) {
+            System.err.println("Pemain maksimal 10 orang! (Menggunakan default: " + this.jumlahPemain + ")");
+        } else {
+            this.jumlahPemain = jumlahPemain;
+        }
+    }
+
+    public int getPeluru() {
+        return peluru;
+    }
+
+    public int getNyawa() {
+        return nyawa;
+    }
+
+    public int getJumlahPemain() {
+        return jumlahPemain;
+    }
+}
